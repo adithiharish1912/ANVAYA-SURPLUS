@@ -1,0 +1,169 @@
+
+{% extends "base.html" %}
+
+{% block title %}NGO Portal | Anvaya{% endblock %}
+
+{% block content %}
+
+<!-- NGO PORTAL HEADER -->
+<section class="ngo-page">
+
+    <div class="ngo-header">
+        <p class="eyebrow">COMMUNITY PARTNERS</p>
+
+        <h1>
+            Food available<br>
+            <em>for good.</em>
+        </h1>
+
+        <p class="ngo-description">
+            Browse approved food donations and request a pickup
+            for your organisation.
+        </p>
+
+        <div class="available-count">
+            <span class="count-number">{{ donations|length }}</span>
+            <span>
+                donation{{ '' if donations|length == 1 else 's' }}
+                currently available
+            </span>
+        </div>
+    </div>
+
+
+    <!-- DONATION LIST -->
+    {% if donations %}
+
+    <div class="ngo-donation-grid">
+
+        {% for d in donations %}
+
+        <article class="ngo-donation-card">
+
+            <div class="donation-card-header">
+                <span class="available-badge">Available</span>
+
+                <span class="donation-id">
+                    ANV-{{ "%04d"|format(d.id) }}
+                </span>
+            </div>
+
+            <div class="donation-card-body">
+
+                <h2>{{ d.food_name }}</h2>
+
+                <p class="donor-type">
+                    {{ d.donor_type }} donation
+                </p>
+
+                <div class="donation-info-grid">
+
+                    <div class="donation-info">
+                        <span class="info-label">QUANTITY</span>
+                        <strong>{{ d.quantity }} kg</strong>
+                    </div>
+
+                    <div class="donation-info">
+                        <span class="info-label">SAFE UNTIL</span>
+                        <strong>
+                            {{ d.safe_until|replace('T', ' ') }}
+                        </strong>
+                    </div>
+
+                </div>
+
+                <div class="pickup-location">
+                    <span class="location-icon">&#9873;</span>
+
+                    <div>
+                        <span class="info-label">PICKUP LOCATION</span>
+                        <p>{{ d.pickup_location }}</p>
+                    </div>
+                </div>
+
+                {% if d.notes %}
+                <div class="donation-notes">
+                    <span class="info-label">ADDITIONAL NOTES</span>
+                    <p>{{ d.notes }}</p>
+                </div>
+                {% endif %}
+
+                <!-- PICKUP REQUEST FORM -->
+                <form
+                    method="POST"
+                    action="{{ url_for('ngo_request_pickup',
+                    donation_id=d.id) }}"
+                    class="pickup-request-form"
+                >
+
+                    <h3>Request a pickup</h3>
+
+                    <div class="form-group">
+                        <label for="ngo_name_{{ d.id }}">
+                            NGO / organisation name *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="ngo_name_{{ d.id }}"
+                            name="ngo_name"
+                            placeholder="Enter organisation name"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ngo_contact_{{ d.id }}">
+                            Contact number *
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="ngo_contact_{{ d.id }}"
+                            name="ngo_contact"
+                            placeholder="Enter contact number"
+                            pattern="[0-9+() -]{7,20}"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="pickup-btn">
+                        Request Pickup &rarr;
+                    </button>
+
+                </form>
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <!-- EMPTY STATE -->
+    <div class="ngo-empty-state">
+
+        <div class="empty-icon">&#10047;</div>
+
+        <h2>No donations available just yet</h2>
+
+        <p>
+            Approved donations will appear here.
+            Please check back soon.
+        </p>
+
+        <a href="{{ url_for('home') }}#donate"
+           class="secondary-btn">
+            Help spread the word
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

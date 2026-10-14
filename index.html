@@ -1,0 +1,393 @@
+
+{% extends "base.html" %}
+
+{% block title %}Anvaya | Food Redistribution{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="hero-section" id="home">
+    <div class="hero-content">
+
+        <p class="eyebrow">A KINDER FOOD ECOSYSTEM</p>
+
+        <h1>
+            Turning Surplus<br>
+            <em>Into Sustenance.</em>
+        </h1>
+
+        <p class="hero-description">
+            Anvaya connects surplus food with the people and communities
+            who need it most. A little less waste can mean a lot more hope.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="#donate" class="primary-btn">
+                Donate Food &rarr;
+            </a>
+
+            <a href="{{ url_for('ngo_dashboard') }}" class="secondary-btn">
+                Find Available Food &rarr;
+            </a>
+        </div>
+
+        <div class="hero-note">
+            <span class="hero-flower">&#10047;</span>
+            <div>
+                <strong>Good food deserves another chance.</strong>
+                <p>Local action. Meaningful impact.</p>
+            </div>
+        </div>
+
+        <p class="hero-tagline">
+            NOURISH &middot; REUSE &middot; RECONNECT
+        </p>
+
+    </div>
+
+    <div class="hero-visual">
+        <div class="hero-image-card">
+            <div class="food-illustration" aria-hidden="true">
+                <span class="food-sun">&#10047;</span>
+                <span class="food-leaf leaf-one">&#10053;</span>
+                <div class="food-bowl">
+                    <span>&#127793;</span>
+                    <span>&#129382;</span>
+                    <span>&#127805;</span>
+                    <span>&#127822;</span>
+                </div>
+                <div class="bowl-base"></div>
+            </div>
+
+            <div class="floating-card">
+                <span class="floating-icon">&#10003;</span>
+                <div>
+                    <strong>Food with a future</strong>
+                    <p>Share what you can</p>
+                </div>
+            </div>
+        </div>
+
+        <p class="hero-image-caption">
+            GOOD FOOD. GOOD PEOPLE.<br>
+            LESS WASTE, MORE CARE.
+        </p>
+    </div>
+</section>
+
+
+<!-- ABOUT SECTION -->
+<section class="about-section page-section" id="about">
+
+    <div class="section-label">
+        <span class="section-icon">&#10047;</span>
+        OUR PURPOSE
+    </div>
+
+    <div class="about-grid">
+
+        <div>
+            <h2>
+                Care should never<br>
+                <em>go to waste.</em>
+            </h2>
+        </div>
+
+        <div class="about-copy">
+            <p>
+                Every day, perfectly good food goes unused while
+                communities need reliable access to meals. Anvaya helps
+                bridge that gap by making food donation, coordination
+                and collection simpler.
+            </p>
+
+            <p>
+                Donors share surplus food, administrators review
+                submissions, and NGOs request available donations
+                for their communities.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- FEATURES SECTION -->
+<section class="features-section page-section" id="features">
+
+    <div class="section-heading">
+        <p class="eyebrow">HOW ANVAYA WORKS</p>
+
+        <h2>
+            Small actions.<br>
+            <em>Real change.</em>
+        </h2>
+
+        <p>
+            A clear, coordinated way to move good food to where
+            it can do good.
+        </p>
+    </div>
+
+    <div class="feature-grid">
+
+        <article class="feature-card">
+            <div class="feature-number">01</div>
+            <div class="feature-icon">&#8594;</div>
+
+            <h3>Donate surplus</h3>
+
+            <p>
+                Share food details, quantity, location and safe-use
+                deadline in a few simple steps.
+            </p>
+        </article>
+
+        <article class="feature-card">
+            <div class="feature-number">02</div>
+            <div class="feature-icon">&#9825;</div>
+
+            <h3>Connect with NGOs</h3>
+
+            <p>
+                Community organisations can browse approved donations
+                and request collection.
+            </p>
+        </article>
+
+        <article class="feature-card">
+            <div class="feature-number">03</div>
+            <div class="feature-icon">&#10047;</div>
+
+            <h3>Track the impact</h3>
+
+            <p>
+                Our admin dashboard helps review donations, coordinate
+                pickups and monitor outcomes.
+            </p>
+        </article>
+
+    </div>
+</section>
+
+
+<!-- DONATION SECTION -->
+<section class="donate-section page-section" id="donate">
+
+    <div class="donate-intro">
+        <p class="eyebrow">MAKE A DIFFERENCE</p>
+
+        <h2>
+            Share a little.<br>
+            <em>Change a lot.</em>
+        </h2>
+
+        <p>
+            Have surplus food? Tell us about it. Every submission
+            is reviewed before appearing in the NGO portal.
+        </p>
+
+        <div class="safety-note">
+            <span>&#10047;</span>
+            <div>
+                <strong>Food safety comes first.</strong>
+                <p>
+                    Only share food that has been handled safely
+                    and is suitable for consumption.
+                </p>
+            </div>
+        </div>
+
+        <a href="{{ url_for('ngo_dashboard') }}" class="ngo-link">
+            I'm an NGO &mdash; browse donations &rarr;
+        </a>
+    </div>
+
+
+    <!-- DONOR FORM -->
+    <div class="donation-form-card">
+
+        <p class="eyebrow">DONOR FORM</p>
+        <h3>Donation details</h3>
+
+        <p class="form-subtitle">
+            Fields marked * are required.
+        </p>
+
+        {% if donation_error %}
+            <div class="flash-message flash-error">
+                {{ donation_error }}
+            </div>
+        {% endif %}
+
+        <form
+            action="{{ url_for('submit_donation') }}"
+            method="POST"
+            class="donation-form"
+        >
+
+            <div class="form-group">
+                <label for="donor_name">Donor name *</label>
+                <input
+                    type="text"
+                    id="donor_name"
+                    name="donor_name"
+                    placeholder="Your full name"
+                    required
+                >
+            </div>
+
+
+            <div class="form-group">
+                <label for="donor_type">Donor type *</label>
+
+                <select id="donor_type" name="donor_type" required>
+                    <option value="">Choose type</option>
+                    <option value="Household">Household</option>
+                    <option value="Restaurant">Restaurant</option>
+                    <option value="Hotel">Hotel</option>
+                    <option value="Event / Caterer">Event / Caterer</option>
+                    <option value="Retailer">Retailer</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+
+            <div class="form-group">
+                <label for="food_name">Food description *</label>
+                <input
+                    type="text"
+                    id="food_name"
+                    name="food_name"
+                    placeholder="E.g. cooked rice, chapati, vegetables"
+                    required
+                >
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+                    <label for="quantity">Quantity (kg) *</label>
+                    <input
+                        type="number"
+                        id="quantity"
+                        name="quantity"
+                        min="0.1"
+                        step="0.1"
+                        placeholder="E.g. 5"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="safe_until">Safe until *</label>
+                    <input
+                        type="datetime-local"
+                        id="safe_until"
+                        name="safe_until"
+                        required
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+                <label for="pickup_location">Pickup location *</label>
+                <input
+                    type="text"
+                    id="pickup_location"
+                    name="pickup_location"
+                    placeholder="Enter the complete pickup address"
+                    required
+                >
+            </div>
+
+
+            <div class="form-group">
+                <label for="contact">Contact number *</label>
+                <input
+                    type="tel"
+                    id="contact"
+                    name="contact"
+                    placeholder="Enter your contact number"
+                    pattern="[0-9+() -]{7,20}"
+                    required
+                >
+            </div>
+
+
+            <div class="form-group">
+                <label for="notes">Additional notes</label>
+                <textarea
+                    id="notes"
+                    name="notes"
+                    rows="3"
+                    placeholder="Packaging, food type or pickup instructions"
+                ></textarea>
+            </div>
+
+
+            <button type="submit" class="primary-btn submit-donation-btn">
+                Submit Donation &rarr;
+            </button>
+
+            <p class="form-footer-note">
+                Your submission will be reviewed by the Anvaya admin team.
+            </p>
+
+        </form>
+    </div>
+
+</section>
+
+
+<!-- IMPACT SECTION -->
+<section class="impact-section page-section" id="impact">
+
+    <div class="section-heading">
+        <p class="eyebrow">OUR SHARED IMPACT</p>
+        <h2>Better <em>together.</em></h2>
+    </div>
+
+    <div class="impact-grid">
+
+        <div class="impact-card">
+            <span class="impact-icon">&#10003;</span>
+            <h3>{{ impact.approved_donations | default(0) }}</h3>
+            <p>Approved donations</p>
+        </div>
+
+        <div class="impact-card">
+            <span class="impact-icon">&#127793;</span>
+            <h3>{{ impact.approved_kg | default(0) }}</h3>
+            <p>Kg of food approved</p>
+        </div>
+
+        <div class="impact-card">
+            <span class="impact-icon">&#9825;</span>
+            <h3>{{ impact.collected_kg | default(0) }}</h3>
+            <p>Kg collected</p>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- CONTACT SECTION -->
+<section class="contact-section page-section" id="contact">
+    <p class="eyebrow">COMMUNITY IN ACTION</p>
+    <h2>Every meal <em>matters.</em></h2>
+
+    <p>
+        Together, we can make surplus food a source of hope.
+        Join Anvaya in building a kinder food ecosystem.
+    </p>
+
+    <a href="#donate" class="primary-btn">
+        Make a Donation &rarr;
+    </a>
+</section>
+
+{% endblock %}

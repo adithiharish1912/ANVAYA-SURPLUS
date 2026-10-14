@@ -1,0 +1,181 @@
+
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | Anvaya{% endblock %}
+
+{% block content %}
+
+<section class="admin-dashboard">
+
+    <div class="dashboard-header">
+        <div>
+            <p class="eyebrow">ANVAYA CONTROL CENTRE</p>
+            <h1>Admin <em>Dashboard</em></h1>
+            <p>
+                Welcome, {{ session.get('admin_username', 'admin') }}.
+                Here's the latest donation activity.
+            </p>
+        </div>
+
+        <a href="{{ url_for('admin_logout') }}" class="logout-btn">
+            Log out &rarr;
+        </a>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <p>Total Donations</p>
+            <h2>{{ stats.total }}</h2>
+            <span>All submissions</span>
+        </div>
+
+        <div class="stat-card">
+            <p>Pending Review</p>
+            <h2>{{ stats.pending }}</h2>
+            <span>Awaiting a decision</span>
+        </div>
+
+        <div class="stat-card">
+            <p>Approved</p>
+            <h2>{{ stats.approved }}</h2>
+            <span>Visible to NGOs</span>
+        </div>
+
+        <div class="stat-card">
+            <p>Collected</p>
+            <h2>{{ stats.picked }}</h2>
+            <span>Completed pickups</span>
+        </div>
+
+    </div>
+
+    <!-- Donation Management -->
+    <div class="management-header">
+        <div>
+            <p class="eyebrow">DONATION MANAGEMENT</p>
+            <h2>All Submissions</h2>
+        </div>
+
+        <a href="{{ url_for('ngo_dashboard') }}" class="secondary-btn">
+            View NGO Portal &rarr;
+        </a>
+    </div>
+
+    {% if donations %}
+
+    <div class="table-wrapper">
+        <table class="donations-table">
+            <thead>
+                <tr>
+                    <th>ID / Food</th>
+                    <th>Donor</th>
+                    <th>Quantity</th>
+                    <th>Safe Until</th>
+                    <th>Status</th>
+                    <th>Pickup</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for d in donations %}
+                <tr>
+                    <td>
+                        <strong>ANV-{{ "%04d"|format(d.id) }}</strong>
+                        <div>{{ d.food_name }}</div>
+                        <small>{{ d.pickup_location }}</small>
+                    </td>
+
+                    <td>
+                        <strong>{{ d.donor_name }}</strong>
+                        <div>{{ d.donor_type }} &middot; {{ d.contact }}</div>
+                    </td>
+
+                    <td>{{ d.quantity }} kg</td>
+
+                    <td>{{ d.safe_until|replace('T', ' ') }}</td>
+
+                    <td>
+                        <span class="status-badge">
+                            {{ d.status }}
+                        </span>
+                    </td>
+
+                    <td>
+                        {% if d.pickup_status == 'Requested' %}
+                            <strong>{{ d.ngo_name }}</strong>
+                            <div>{{ d.ngo_contact }}</div>
+                            <small>Pickup requested</small>
+                        {% else %}
+                            {{ d.pickup_status }}
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <div class="action-buttons">
+
+                            {% if d.status == 'Pending' %}
+                            <form method="POST"
+                                  action="{{ url_for('admin_update_donation',
+                                  donation_id=d.id) }}">
+                                <input type="hidden"
+                                       name="status"
+                                       value="Approved">
+                                <button type="submit" class="approve-btn">
+                                    Approve
+                                </button>
+                            </form>
+
+                            <form method="POST"
+                                  action="{{ url_for('admin_update_donation',
+                                  donation_id=d.id) }}">
+                                <input type="hidden"
+                                       name="status"
+                                       value="Rejected">
+                                <button type="submit" class="reject-btn">
+                                    Reject
+                                </button>
+                            </form>
+                            {% endif %}
+
+                            {% if d.pickup_status == 'Requested' %}
+                            <form method="POST"
+                                  action="{{ url_for('admin_update_pickup',
+                                  donation_id=d.id) }}">
+                                <input type="hidden"
+                                       name="pickup_status"
+                                       value="Collected">
+                                <button type="submit" class="collect-btn">
+                                    Mark Collected
+                                </button>
+                            </form>
+                            {% endif %}
+
+                            {% if d.status != 'Pending'
+                                  and d.pickup_status != 'Requested' %}
+                                <span>No action</span>
+                            {% endif %}
+
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+        <div class="empty-icon">&#10047;</div>
+        <h2>No submissions yet</h2>
+        <p>New donor submissions will appear here.</p>
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}
